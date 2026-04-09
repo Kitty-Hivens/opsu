@@ -52,7 +52,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<jvmTarget>21</jvmTarget>
+					<jvmTarget>25</jvmTarget>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -73,7 +73,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<release>21</release>
+					<release>25</release>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
