@@ -27,13 +27,6 @@ java {
 
 repositories {
     mavenCentral()
-    // TODO: net.indiespot:media нужна замена — пока берём из локального repo
-    maven {
-        url = uri("${rootProject.projectDir}/repo")
-        content {
-            includeGroup("net.indiespot")
-        }
-    }
 }
 
 // ─── Dependencies ───────────────────────────────────────────────────────────
@@ -77,7 +70,7 @@ dependencies {
 
     // ── Video (FFmpeg wrapper) ────────────────────────────────────────────────
     // TODO: net.indiespot:media - find a replacement or cut it out
-    implementation("net.indiespot:media:0.8.9")
+    // implementation("net.indiespot:media:0.8.9")
 }
 
 // ─── Source sets ────────────────────────────────────────────────────────────
@@ -194,7 +187,7 @@ tasks.jar {
     }
 
     // Merge all runtime deps into a single jar
-    from(configurations.runtimeClasspath.map { if (it.isDirectory) it else zipTree(it) })
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA", "**/Thumbs.db")
