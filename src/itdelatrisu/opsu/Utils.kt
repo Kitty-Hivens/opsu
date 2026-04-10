@@ -42,9 +42,13 @@ import java.security.cert.X509Certificate
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import com.sun.jna.platform.FileUtils
+import itdelatrisu.opsu.options.Options
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import kotlin.math.ln
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 object Utils {
 
@@ -58,7 +62,7 @@ object Utils {
 
     // ── GC ───────────────────────────────────────────────────────────────────
 
-    private val GC_MEMORY_THRESHOLD = 150 * 1_000_000L
+    private const val GC_MEMORY_THRESHOLD = 150 * 1_000_000L
     private var baselineMemoryUsed = 0L
 
     fun gc(force: Boolean) {
@@ -95,7 +99,7 @@ object Utils {
     fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         val dx = x1 - x2
         val dy = y1 - y2
-        return Math.sqrt((dx * dx + dy * dy).toDouble()).toFloat()
+        return sqrt((dx * dx + dy * dy).toDouble()).toFloat()
     }
 
     fun lerp(a: Float, b: Float, t: Float): Float = a * (1 - t) + b * t
@@ -109,7 +113,7 @@ object Utils {
     fun standardDeviation(list: List<Int>): Double {
         val avg = list.average().toFloat()
         val variance = list.map { (it - avg) * (it - avg) }.average().toFloat()
-        return Math.sqrt(variance.toDouble())
+        return sqrt(variance.toDouble())
     }
 
     fun parseBoolean(s: String): Boolean = s.toInt() == 1
@@ -129,9 +133,9 @@ object Utils {
 
     fun bytesToString(bytes: Long): String {
         if (bytes < 1024) return "$bytes B"
-        val exp = (Math.log(bytes.toDouble()) / Math.log(1024.0)).toInt()
+        val exp = (ln(bytes.toDouble()) / ln(1024.0)).toInt()
         val pre = "KMGTPE"[exp - 1]
-        return "%.1f %cB".format(bytes / Math.pow(1024.0, exp.toDouble()), pre)
+        return "%.1f %cB".format(bytes / 1024.0.pow(exp.toDouble()), pre)
     }
 
     fun getTimeString(seconds: Int): String = when {
@@ -171,12 +175,21 @@ object Utils {
         val fileUtils = FileUtils.getInstance()
         if (fileUtils.hasTrash()) {
             try {
-                fileUtils.moveToTrash(arrayOf(file))
+                fileUtils.moveToTrash(file)
                 return true
             } catch (e: IOException) {}
         }
         if (file.isDirectory) deleteDirectory(file) else file.delete()
         return false
+    }
+
+    @JvmStatic
+    fun unzip(file: File, dest: File) {
+        try {
+            net.lingala.zip4j.core.ZipFile(file).extractAll(dest.absolutePath)
+        } catch (e: Exception) {
+            ErrorHandler.error("Failed to unzip '${file.name}'.", e, false)
+        }
     }
 
     fun openInFileManager(file: File) {
@@ -207,7 +220,7 @@ object Utils {
         conn.connectTimeout = 5000
         conn.readTimeout = 10000
         conn.useCaches = false
-        conn.setRequestProperty("User-Agent", options.Options.USER_AGENT)
+        conn.setRequestProperty("User-Agent", Options.USER_AGENT)
         try {
             conn.connect()
         } catch (e: SocketTimeoutException) {
