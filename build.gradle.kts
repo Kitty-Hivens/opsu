@@ -27,12 +27,10 @@ java {
 
 repositories {
     mavenCentral()
-    // local repo still needed for LWJGL2 snapshot + Slick2D
+    // TODO: net.indiespot:media нужна замена — пока берём из локального repo
     maven {
         url = uri("${rootProject.projectDir}/repo")
         content {
-            includeGroup("org.lwjgl.lwjgl")
-            includeGroup("org.slick2d")
             includeGroup("net.indiespot")
         }
     }
@@ -44,15 +42,9 @@ dependencies {
     // Kotlin stdlib (automatically added by plugin, but explicit is fine)
     implementation(kotlin("stdlib"))
 
-    // ── Graphics / Audio engine (LWJGL2 + Slick2D — legacy, still needed) ──
-    implementation("org.lwjgl.lwjgl:lwjgl:2.9.4-SNAPSHOT") {
-        exclude(group = "net.java.jinput", module = "jinput")
-    }
-    implementation("org.slick2d:slick2d-core:1.0.2") {
-        exclude(group = "org.lwjgl.lwjgl", module = "lwjgl")
-        exclude(group = "org.jcraft",      module = "jorbis")
-        exclude(group = "javax.jnlp",      module = "jnlp-api")
-    }
+    // ── Graphics / Audio engine ───────────────────────────────────────────
+    // TODO: org.newdawn.slick and LWJGL2 removed - all code using them WILL NOT COMPILE
+    // Replace with LibGDX as we rewrite
 
     // ── Audio ────────────────────────────────────────────────────────────────
     implementation("com.googlecode.soundlibs:jlayer:1.0.1.4")
@@ -84,6 +76,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed")
 
     // ── Video (FFmpeg wrapper) ────────────────────────────────────────────────
+    // TODO: net.indiespot:media - find a replacement or cut it out
     implementation("net.indiespot:media:0.8.9")
 }
 
