@@ -39,6 +39,12 @@ dependencies {
     // TODO: org.newdawn.slick and LWJGL2 removed - all code using them WILL NOT COMPILE
     // Replace with LibGDX as we rewrite
 
+    // ── LibGDX ────────────────────────────────────────────────────────────────────
+    val gdxVersion = "1.12.1"
+    implementation("com.badlogicgames.gdx:gdx:$gdxVersion")
+    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion")
+    runtimeOnly("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop")
+
     // ── Audio ────────────────────────────────────────────────────────────────
     implementation("com.googlecode.soundlibs:jlayer:1.0.1.4")
     implementation("com.googlecode.soundlibs:mp3spi:1.9.5.4") {
@@ -96,24 +102,10 @@ application {
 fun jvmArgs(): List<String> = listOf(
     // ── Reflection access for LWJGL2 / Slick2D ────────────────────────────
     "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-    "--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED",
     "--add-opens", "java.base/java.nio=ALL-UNNAMED",
-    "--add-opens", "java.base/java.util=ALL-UNNAMED",
-    "--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED",
-    "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
-
-    // ── AWT / desktop access (Slick2D uses AWT under the hood) ────────────
-    "--add-opens", "java.desktop/sun.awt=ALL-UNNAMED",
-    "--add-opens", "java.desktop/sun.awt.image=ALL-UNNAMED",
-    "--add-opens", "java.desktop/sun.java2d=ALL-UNNAMED",
-    "--add-opens", "java.desktop/java.awt=ALL-UNNAMED",
-    "--add-opens", "java.desktop/java.awt.image=ALL-UNNAMED",
 
     // ── JNA native access (required since Java 22) ────────────────────────
     "--enable-native-access=ALL-UNNAMED",
-
-    // ── LWJGL2 library path is set at runtime, but this suppresses warns ──
-    "-Dorg.lwjgl.util.NoChecks=true",
 
     // ── Prevent headless mode when running from CLI ────────────────────────
     "-Djava.awt.headless=false",
